@@ -1,4 +1,4 @@
-# scd_processor.py
+# sc_generator/services/wav_service/scd_processor.py
 
 import os
 from services.wav_service.scd_file import ScdFile
