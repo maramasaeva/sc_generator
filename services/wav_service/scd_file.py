@@ -1,5 +1,3 @@
-# scd_file.py
-
 import os
 
 class ScdFile:
@@ -10,9 +8,6 @@ class ScdFile:
         self.output_path = None
 
     def set_output_path(self, output_folder):
-        """
-        Set the output path for the .wav file based on the given output folder.
-        """
         self.output_path = os.path.join(output_folder, self.output_name)
 
     def __repr__(self):

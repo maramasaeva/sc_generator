@@ -1,12 +1,38 @@
 # main.py
 
 import os
-from services.wav_service.scd_processor import ScdProcessor
+from services.audio_captioning import process_wav_files
+from services.generate_music import analyze_poem, find_matching_captions, compute_similarity
+from services.generate_scd import generate_supercollider_code
 
-if __name__ == "__main__":
-    scd_folder = "/Users/maramasaeva/Documents/SC/SC_GENERATOR/sc_generator/database/scd"
-    scd_playable_folder = "/Users/maramasaeva/Documents/SC/SC_GENERATOR/sc_generator/database/scd_playable"
-    wav_folder = "/Users/maramasaeva/Documents/SC/SC_GENERATOR/sc_generator/database/wav"
+def main():
+    # Step 1: Generate captions for audio files
+    print("Generating captions for audio files...")
+    if not os.path.exists('database/captions'):
+        os.makedirs('database/captions')
+    process_wav_files('database/wav', 'database/captions')
 
-    processor = ScdProcessor(scd_folder, scd_playable_folder, wav_folder)
-    processor.process_all()
+    # Step 2: Get user input
+    poem = input("Enter your poem:\n")
+    poem_features = analyze_poem(poem)
+
+    # Step 3: Find matching caption
+    matching_caption = find_matching_captions(poem_features, 'database/captions')
+    if matching_caption is None:
+        print("No matching captions found.")
+        return
+
+    # Step 4: Generate SuperCollider code
+    prompt = (
+        f"Poem:\n{poem}\n\n"
+        f"Musical Description:\n{matching_caption}\n\n"
+        "Using the emotions and themes from the poem and the musical description, "
+        "generate SuperCollider code that evokes these emotions and themes."
+    )
+    scd_code = generate_supercollider_code(prompt)
+    with open('output.scd', 'w') as f:
+        f.write(scd_code)
+    print("Generated SuperCollider code saved to output.scd")
+
+if __name__ == '__main__':
+    main()
